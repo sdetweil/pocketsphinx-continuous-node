@@ -17,15 +17,18 @@ var reservedEvents = {
 function PocketSphinxContinuous(config) {
   this.setId = config.setId;
   this.verbose = config.verbose;
+  this.microphone = config.microphone;
   EventEmitter.call(this);
 
   var pc = spawn('pocketsphinx_continuous', [
+    '-adcdev',
+    'plughw:' + this.microphone,
     '-inmic',
     'yes',
     '-lm',
-    this.setId + '.lm',
+    'modules/MMM-voice/' + this.setId + '.lm',
     '-dict',
-    this.setId + '.dic'
+    'modules/MMM-voice/' + this.setId + '.dic'
   ]);
 
   var psc = this;
