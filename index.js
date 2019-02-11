@@ -14,51 +14,77 @@ var reservedEvents = {
   pipe: true,
   unpipe: true
 };
-function PocketSphinxContinuous(config) {
+var pc=null;
+var self;
+function PocketSphinxContinuous(config)  {
+	self=this;
   this.setId = config.setId;
   this.verbose = config.verbose;
   this.microphone = config.microphone;
+	this.startListening= startListening;
+	this.stopListening= stopListening;
+	this.isListening= getStatus;
+  if(config.autostart == undefined || config.autostart==true)
+  {
+    startListening()
+  }
   EventEmitter.call(this);
-
-  var pc = spawn('pocketsphinx_continuous', [
-    '-adcdev',
-    'plughw:' + this.microphone,
-    '-inmic',
-    'yes',
-    '-lm',
-    'modules/MMM-voice/' + this.setId + '.lm',
-    '-dict',
-    'modules/MMM-voice/' + this.setId + '.dic'
-  ]);
-
-  var psc = this;
-
-  pc.stdout.on('data', function(data) {
-    var output = data.toString().trim();
-    if (output) {
-      psc.emit('data', output);
-    }
-    // Also try to emit an event for the actual data, unless of course the
-    // event is a reserved one.
-    var eventName = output.toLowerCase();
-    if (!reservedEvents[eventName]) {
-      psc.emit(eventName, output)
-    }
-  });
-  pc.stderr.on('data', function(data) {
-    var output = data.toString().trim();
-    if (config.verbose && output) {
-      psc.emit('debug', data);
-    }
-  });
-  pc.on('close', function(code) {
-    psc.emit('error', code);
-  });
-  pc.on('error', function(err) {
-    psc.emit('error', err);
-  })
 }
 
-util.inherits(PocketSphinxContinuous, EventEmitter);
+function startListening(){  
+
+  if(pc==null){
+    pc = spawn('pocketsphinx_continuous', [
+      '-adcdev',
+      'plughw:' + self.microphone,
+      '-inmic',
+      'yes',
+      '-lm',
+      'modules/MMM-voice/' + self.setId + '.lm',
+      '-dict',
+      'modules/MMM-voice/' + self.setId + '.dic'
+    ]);
+    var psc = self;
+
+    pc.stdout.on('data', function(data) {
+      var output = data.toString().trim();
+      if (output) {
+        psc.emit('data', output);
+      }
+      // Also try to emit an event for the actual data, unless of course the
+      // event is a reserved one.
+      var eventName = output.toLowerCase();
+      if (!reservedEvents[eventName]) {
+        psc.emit(eventName, output)
+      }
+    });
+    pc.stderr.on('data', function(data) {
+      var output = data.toString().trim();
+      if (config.verbose && output) {
+        psc.emit('debug', data);
+      }
+    });
+    pc.on('close', function(code) {
+      psc.emit('error', code);
+    });
+    pc.on('error', function(err) {
+      psc.emit('error', err);
+    })
+  }
+}
+
+function stopListening(){
+    if(pc!=null){
+      pc.kill();
+      pc=null;
+    }
+        
+}
+
+function getStatus(){
+    return pc!=null;  
+}
+
+util.inherits(PocketSphinxContinuous , EventEmitter);
 
 module.exports = PocketSphinxContinuous;
