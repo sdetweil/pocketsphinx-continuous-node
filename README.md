@@ -75,7 +75,7 @@ stop the daemon that does speech to text, free microphone for other modules
 
 ####   isListening
 
-query listening status, reutnrs true or false
+query listening status, returns true or false
 
 ## Licence
 MIT
