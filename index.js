@@ -35,7 +35,6 @@ PocketSphinxContinuous.prototype = function(){
   
   startListening = function(){  
     if(pc==null){
-      console.log("mic="+this.microphone+" id="+this.setId)
       pc = spawn('pocketsphinx_continuous', [
         '-adcdev',
         'plughw:' + this.microphone,
