@@ -26,6 +26,7 @@ const Psc = require('pocketsphinx-continuous');
 const ps = new Psc({
   setId: '1337',  // A "set id". See explanation below.
   verbose: false, // Setting this to true will give you a whole lot of debug output in your console.
+  microphone: xxxx,  // micrphone number , like 1,0 (see arecord -l for a list of recording devices
   autostart: true|false  // optional flag to enable microphone sharing
 });
 ```
