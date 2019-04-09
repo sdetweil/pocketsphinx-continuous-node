@@ -39,7 +39,7 @@ PocketSphinxContinuous.prototype.start = function() {
       '-inmic',
       'yes',
       '-lm',
-      `modules/MMM-voice/${this.setId}.lm`,
+      'modules/MMM-voice/${this.setId}.lm',
       '-dict',
       `modules/MMM-voice/${this.setId}.dic`
     ]);
