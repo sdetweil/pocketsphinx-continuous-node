@@ -29,7 +29,7 @@ function PocketSphinxContinuous(config) {
 
 PocketSphinxContinuous.prototype.start = function() {
   if (!this.isListening()) {
-    let mic=this.microphone;
+    let mic = this.microphone;
     // if name starts with number
     if (this.microphone.match(/^\d/))
       mic = 'plughw:'+this.microphone;      
